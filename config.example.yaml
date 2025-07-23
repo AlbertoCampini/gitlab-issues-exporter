@@ -1,0 +1,18 @@
+# GitLab API configuration
+gitlab:
+  api_base_url: "https://gitlab.com/api/v4"
+  project_id: <your_project_id_here>
+
+# Export settings
+export:
+  output_dir: "exported_issues"
+  # Issue selection: 
+  # 'all' to export all issues, or a list of IIDs like [1, 2, 3]
+  issues_to_export:  # "all" or [1, 2, 3]
+  # Filter by state if issues_to_export is 'all'. Options: 'opened', 'closed', 'all'
+  state: "all"
+  index_filename: "issues.html"
+
+# HTML rendering settings
+rendering:
+  css_file: "style.css"
