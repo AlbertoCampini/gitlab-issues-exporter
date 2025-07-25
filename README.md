@@ -3,211 +3,141 @@
 
 ## Overview
 
-GitLab Issues Exporter is a Python tool that allows you to export issues from a GitLab project to HTML files, including all comments and attachments. The tool automates technical documentation and collaboration by generating navigable HTML and downloading all related attachments.
+GitLab Issues Exporter is a Python tool designed to export issues from a GitLab project into a user-friendly HTML format. It captures all essential information, including issue descriptions, comments, and attachments, making it easy to create offline archives, generate technical documentation, or migrate data.
 
 ## Features
 
-- **Flexible export:** Export all issues or only selected ones via configuration.
-- **HTML rendering:** Converts Markdown from issues and comments to HTML.
-- **Attachment download:** Downloads all files linked to issues and comments.
-- **Navigable index:** Creates an `index.html` file for browsing exported issues.
-- **Simple configuration:** All options managed via `config.yaml` and environment variables in `.env`.
-- **Detailed logging:** Provides logs for monitoring and troubleshooting.
+- **Flexible Export Options**: Configure the tool to export all issues or a specific list of issues by their IDs.
+- **State Filtering**: Filter issues by their state (e.g., `opened`, `closed`, or `all`).
+- **Complete Data Capture**: Exports issue details, comments, and downloads all associated attachments.
+- **HTML Rendering**: Converts GitLab's Markdown syntax into clean, readable HTML files.
+- **Navigable Index**: Automatically generates an `index.html` file for easy browsing of all exported issues.
+- **Easy Configuration**: All settings are managed through a `config.yaml` file and a `.env` file for sensitive data like API tokens.
 
 ## Prerequisites
 
-- Python >= 3.10
-- A GitLab Private Access Token
-- Internet connection to access GitLab APIs
+- Python 3.8 or newer.
+- A GitLab Private Access Token with `api` scope.
 
 ## Installation
 
-1. **Clone the repository:**
+1.  **Clone the Repository:**
+
     ```bash
-    git clone <repository_url>
+    git clone <your-repository-url>
     cd issues_exporter
     ```
 
-2. **Create a virtual environment:**
+2.  **Create and Activate a Virtual Environment:**
+
     ```bash
-    python -m venv venv
-    # On Windows:
-    venv\Scripts\activate
-    # On macOS/Linux:
-    # source venv/bin/activate
+    # Create the virtual environment
+    python -m venv .venv
+
+    # Activate it (Windows)
+    .venv\Scripts\activate
+
+    # Activate it (macOS/Linux)
+    # source .venv/bin/activate
     ```
 
-3. **Install dependencies:**
+3.  **Install Dependencies:**
+
     ```bash
     pip install -r requirements.txt
     ```
 
-## Configuration
-
-1. **Set up environment files:**
-    - Copy `.env.example` to `.env` and add your GitLab token:
-      ```
-      GITLAB_PRIVATE_TOKEN=your_gitlab_private_token
-      ```
-
-2. **Configure `config.yaml`:**
-    - Set your project ID, issue selection, and output directory. Example:
-      ```yaml
-      gitlab:
-        api_base_url: "https://gitlab.com/api/v4"
-        project_id: 12345678
-
-      export:
-        output_dir: "exported_issues"
-        issues_to_export: "all" # or [1, 2, 3]
-        state: "opened" # "closed" or "all"
-
-      html:
-        css_file: "styles.css"
-      ```
-
 ## How to Use
 
-1. **Run the main script:**
+1.  **Configure Environment Variables:**
+
+    Copy the example `.env` file:
+
+    ```bash
+    copy .env.example .env
+    ```
+
+    Open the new `.env` file and add your GitLab Private Access Token:
+
+    ```
+    GITLAB_PRIVATE_TOKEN="your_gitlab_token_here"
+    ```
+
+2.  **Configure the Export:**
+
+    Copy `config.example.yaml` to `config.yaml` and customize it with your project details. You can specify the GitLab project ID and choose which issues to export.
+
+    **Example `config.yaml`:**
+
+    ```yaml
+    gitlab:
+      api_base_url: "https://gitlab.com/api/v4"
+      project_id: 12345678 # Your GitLab project ID
+
+    export:
+      output_dir: "exported_issues"
+      # Use "all" to export all issues or provide a list of issue IDs: [1, 5, 10]
+      issues_to_export: "all"
+      # Filter by state: "opened", "closed", or "all"
+      state: "opened"
+    ```
+
+3.  **Run the Exporter:**
+
+    Execute the main script from the project's root directory:
+
     ```bash
     python main.py
     ```
-    The tool will read configuration from `config.yaml` and `.env`, exporting the selected issues.
 
-2. **Check outputs:**
-    - HTML files and attachments will be saved in the specified output directory (`output_dir`).
-    - Each issue will have its own folder with `issue_{iid}.html` and attachments.
-    - An `index.html` file will be generated for navigation.
+4.  **Check the Output:**
+
+    The exported HTML files and attachments will be saved in the directory specified by `output_dir` in your configuration (e.g., `exported_issues/`).
 
 ## Project Structure
 
 ```
 issues_exporter/
-├── config.yaml
-├── config.example.yaml
 ├── .env
 ├── .env.example
 ├── .gitignore
+├── config.yaml
+├── config.example.yaml
 ├── exporter.py
 ├── gitlab_client.py
 ├── html_renderer.py
 ├── main.py
-├── requirements.txt
 ├── README.md
-└── __pycache__/
+└── requirements.txt
 ```
 
 ## Configuration Details
 
-### config.yaml
+### `config.yaml`
 
-| Section   | Parameter            | Description                                              | Example                        |
-|-----------|----------------------|----------------------------------------------------------|--------------------------------|
-| gitlab    | api_base_url         | Base URL for GitLab API                                  | https://gitlab.com/api/v4      |
-|           | project_id           | GitLab project ID                                        | 12345678                       |
-| export    | output_dir           | Output directory for exported files                      | exported_issues                |
-|           | issues_to_export     | "all" or list of issue IIDs to export                   | "all" / [1, 2, 3]              |
-|           | state                | Issue state to export ("opened", "closed", "all")        | opened                         |
-| html      | css_file             | CSS file for custom HTML styling                         | styles.css                     |
+| Section | Parameter          | Description                                       |
+|---------|--------------------|---------------------------------------------------|
+| `gitlab`  | `project_id`       | The ID of your GitLab project.                    |
+| `export`  | `output_dir`       | The folder where exported files will be saved.    |
+|         | `issues_to_export` | Set to `"all"` or a list of issue IDs (e.g., `[1, 2]`). |
+|         | `state`            | Filters issues by state: `opened`, `closed`, `all`. |
 
-### .env
+### `.env`
 
-| Variable               | Description                                 | Example                        |
-|------------------------|---------------------------------------------|--------------------------------|
-| GITLAB_PRIVATE_TOKEN   | Private access token for GitLab API         | glpat-xxxxxxxxxxxxxxxxxxxx     |
+| Variable               | Description                          |
+|------------------------|--------------------------------------|
+| `GITLAB_PRIVATE_TOKEN` | Your GitLab Private Access Token.    |
 
 ## Troubleshooting
 
-- **Invalid token:** Make sure the token in `.env` is correct and has the required permissions.
-- **Wrong project ID:** Ensure `project_id` in `config.yaml` matches your GitLab project.
-- **Path issues on Windows:** Use forward slashes (`/`) or double backslashes (`\\`) in paths.
-- **Check logs:** Logs are generated in the output directory to help diagnose errors.
+-   **Authentication Errors**: Ensure your `GITLAB_PRIVATE_TOKEN` in the `.env` file is correct and has the necessary `api` permissions.
+-   **Project Not Found**: Double-check that the `project_id` in `config.yaml` is correct.
+-   **File Not Found Errors**: Make sure you are running `python main.py` from the root directory of the project.
 
 ## Contributing
 
-Contributions, issues, and feature requests are welcome! Please open an issue or submit a pull request.
+Contributions are welcome! If you have suggestions for improvements or find any issues, please feel free to open an issue or submit a pull request.
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
-
-3.  **Install dependencies:**
-
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-## Configuration
-
-1.  **Set up the environment file:**
-
-    Create a `.env` file by copying the example file:
-
-    ```bash
-    cp .env.example .env
-    ```
-
-    Open the `.env` file and add your GitLab Private Access Token:
-
-    ```
-    GITLAB_PRIVATE_TOKEN=your_gitlab_private_token
-    ```
-
-2.  **Configure `config.yaml`:**
-
-    Open `config.yaml` and set your GitLab project ID and other settings:
-
-    ```yaml
-    gitlab:
-      api_base_url: "https://gitlab.com/api/v4"
-      project_id: 12345678  # Your project ID
-
-    export:
-      output_dir: "exported_issues"
-      # Issue selection: 
-      # 'all' to export all issues, or a list of IIDs like [1, 2, 3]
-      issues_to_export: [185] # or [1, 2, 3]
-      output_dir: "exported_issues"
-
-    html:
-      css_file: "styles.css" # Optional: for custom styling
-    ```
-
-## Usage
-
-To run the exporter, simply execute the `main.py` script:
-
-```bash
-python main.py
-```
-
-The script will read the configuration from `config.yaml` to determine which issues to export.
-
-### Configuration Examples
-
-**To export all issues:**
-
-```yaml
-# in config.yaml
-export:
-  # ...
-  issues_to_export: "all"
-  state: "opened" # or "closed", "all"
-```
-
-**To export specific issues:**
-
-```yaml
-# in config.yaml
-export:
-  # ...
-  issues_to_export: [123, 456, 789]
-```
-
-## Output
-
-The exported files will be saved in the directory specified by `output_dir` in your `config.yaml` (e.g., `exported_issues/`).
-
-Each issue will have its own folder containing the `issue_{iid}.html` file and any downloaded attachments.
-
-An `index.html` file will be created in the root of the output directory, providing a list of all exported issues.
+This project is unlicensed. You are free to use, modify, and distribute it as you see fit. Consider adding a `LICENSE` file if you plan to share it publicly.

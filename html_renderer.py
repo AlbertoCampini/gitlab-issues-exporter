@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 def find_attachment_paths(text):
     import re
     # Finds markdown links pointing to /uploads/... paths
-    return re.findall(r'!\[(.*?)\]\((/uploads/[^)]+)\)', text)
+    return re.findall(r'\[(.*?)\]\((/uploads/[^)]+)\)', text)
 
 def render_issue_html(details, notes, css=''):
     meta = {
@@ -23,8 +23,7 @@ def render_issue_html(details, notes, css=''):
         'Link': f"<a href='{details.get('web_url')}'>View on GitLab</a>"
     }
     title = details.get('title', '')
-
-    raw_desc_md = emoji.emojize(details.get('description', ''), language='alias')
+    raw_desc_md = emoji.emojize(details.get('description', '') or '', language='alias')
     md = markdown.Markdown(extensions=['tables', 'fenced_code', 'toc'])
     desc_html = md.convert(raw_desc_md)
 

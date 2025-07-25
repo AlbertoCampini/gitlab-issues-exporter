@@ -16,7 +16,6 @@ def export_issues(client: GitLabClient, issue_iids, output_dir):
 
             issue_folder = os.path.join(output_dir, str(iid))
             os.makedirs(issue_folder, exist_ok=True)
-
             # Render issue HTML
             html_content = render_issue_html(details, notes)
             html_filename = f"issue_{iid}.html"
@@ -26,7 +25,7 @@ def export_issues(client: GitLabClient, issue_iids, output_dir):
             print(f"Saved HTML for issue {iid}: {html_path}")
 
             # Download attachments
-            combined_md = details.get('description', '') + '\n'.join(n['body'] for n in notes)
+            combined_md = details.get('description', '') or '' + '\n'.join(n['body'] for n in notes)
             attachment_paths = find_attachment_paths(emoji.emojize(combined_md, language='alias'))
 
             for att_name, att_path in attachment_paths:
